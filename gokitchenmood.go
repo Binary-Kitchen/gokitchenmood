@@ -1,51 +1,38 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"gokitchenmood/lampen"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-type Page struct {
-	Title         string
-	ValueLampe0x1 string
-	ValueLampe0x2 string
-	ValueLampe0x3 string
-	ValueLampe0x4 string
-	ValueLampe0x5 string
-	ValueLampe0x6 string
-	ValueLampe0x7 string
-	ValueLampe0x8 string
-	ValueLampe0x9 string
-	ValueLampe0xA string
-}
-
-func loadLampValues(title string) (*Page, error) {
-	filename := title + ".json"
-	body, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	var p Page
-	err = json.Unmarshal(body, &p)
-	return &p, nil
-}
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	title := "moodlights"
-	p, err := loadLampValues(title)
+	p := &lampen.Lampen{}
+	err := p.LoadLampValues(title)
 	if err != nil {
-		p = &Page{Title: title}
+		log.Printf("Error loading Config File")
+		p = &lampen.Lampen{
+			ValueLampe0x1: "0",
+			ValueLampe0x2: "0",
+			ValueLampe0x3: "0",
+			ValueLampe0x4: "0",
+			ValueLampe0x5: "0",
+			ValueLampe0x6: "0",
+			ValueLampe0x7: "0",
+			ValueLampe0x8: "0",
+			ValueLampe0x9: "0",
+			ValueLampe0xA: "0"}
 	}
 	t, _ := template.ParseFiles("template.html")
 	t.Execute(w, p)
+
 }
 
 func savehandler(w http.ResponseWriter, r *http.Request) {
-	p := &Page{Title: "moodlights"}
+	p := &lampen.Lampen{}
 	p.ValueLampe0x1 = r.FormValue("Lampe0x1")
 	p.ValueLampe0x2 = r.FormValue("Lampe0x2")
 	p.ValueLampe0x3 = r.FormValue("Lampe0x3")
@@ -56,11 +43,10 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 	p.ValueLampe0x8 = r.FormValue("Lampe0x8")
 	p.ValueLampe0x9 = r.FormValue("Lampe0x9")
 	p.ValueLampe0xA = r.FormValue("Lampe0xA")
-	b, err := json.Marshal(p)
+	err := p.WriteLampValues("moodlights")
 	if err != nil {
 		log.Fatal(err)
 	}
-	ioutil.WriteFile("moodlights.json", b, 0644)
 	fmt.Fprintf(w, "<h1>Erfolg</h1>"+
 		"Moodlights wurden geändert!"+
 		"<form action=\"/\" method=\"POST\">"+
