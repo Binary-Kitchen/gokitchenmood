@@ -1,15 +1,15 @@
 <h1>Binary Kitchen Moodlights</h1>
 
 <form action="/save" method="POST">
-<div>Lampe0x1: <input type="text" name="Lampe0x1" value={{printf "%s" .ValueLampe0x1}} maxlength="6"></div>
-<div>Lampe0x2: <input type="text" name="Lampe0x2" value={{printf "%s" .ValueLampe0x2}} maxlength="6"></div>
-<div>Lampe0x3: <input type="text" name="Lampe0x3" value={{printf "%s" .ValueLampe0x3}} maxlength="6"></div>
-<div>Lampe0x4: <input type="text" name="Lampe0x4" value={{printf "%s" .ValueLampe0x4}} maxlength="6"></div>
-<div>Lampe0x5: <input type="text" name="Lampe0x5" value={{printf "%s" .ValueLampe0x5}} maxlength="6"></div>
-<div>Lampe0x6: <input type="text" name="Lampe0x6" value={{printf "%s" .ValueLampe0x6}} maxlength="6"></div>
-<div>Lampe0x7: <input type="text" name="Lampe0x7" value={{printf "%s" .ValueLampe0x7}} maxlength="6"></div>
-<div>Lampe0x8: <input type="text" name="Lampe0x8" value={{printf "%s" .ValueLampe0x8}} maxlength="6"></div>
-<div>Lampe0x9: <input type="text" name="Lampe0x9" value={{printf "%s" .ValueLampe0x9}} maxlength="6"></div>
-<div>Lampe0xA: <input type="text" name="Lampe0xA" value={{printf "%s" .ValueLampe0xA}} maxlength="6"></div>
+<div>Lampe0: <input type="text" name="Lampe0" value={{index .Values 0}} maxlength="7"></div>
+<div>Lampe1: <input type="text" name="Lampe0" value={{index .Values 1}} maxlength="7"></div>
+<div>Lampe2: <input type="text" name="Lampe0" value={{index .Values 2}} maxlength="7"></div>
+<div>Lampe3: <input type="text" name="Lampe0" value={{index .Values 3}} maxlength="7"></div>
+<div>Lampe4: <input type="text" name="Lampe0" value={{index .Values 4}} maxlength="7"></div>
+<div>Lampe5: <input type="text" name="Lampe0" value={{index .Values 5}} maxlength="7"></div>
+<div>Lampe6: <input type="text" name="Lampe0" value={{index .Values 6}} maxlength="7"></div>
+<div>Lampe7: <input type="text" name="Lampe0" value={{index .Values 7}} maxlength="7"></div>
+<div>Lampe8: <input type="text" name="Lampe0" value={{index .Values 8}} maxlength="7"></div>
+<div>Lampe9: <input type="text" name="Lampe0" value={{index .Values 9}} maxlength="7"></div>
 <div><input type="submit" value="Save"></div>
 </form>

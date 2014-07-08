@@ -4,24 +4,28 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"regexp"
 )
 
+var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
+
 type Lampen struct {
-	ValueLampe0x1 string
-	ValueLampe0x2 string
-	ValueLampe0x3 string
-	ValueLampe0x4 string
-	ValueLampe0x5 string
-	ValueLampe0x6 string
-	ValueLampe0x7 string
-	ValueLampe0x8 string
-	ValueLampe0x9 string
-	ValueLampe0xA string
+	Values [10]string
 }
 
 func (l *Lampen) Send() error {
 	err := errors.New("Not yet implemented")
 	return err
+}
+
+func (l *Lampen) Parse(input string, number int) error {
+	if validColor.MatchString(input) {
+		l.Values[number] = input
+		return nil
+	} else {
+		err := errors.New("String does not match Color Regex")
+		return err
+	}
 }
 
 func (l *Lampen) LoadLampValues(filename string) error {
