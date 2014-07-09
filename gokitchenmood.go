@@ -28,7 +28,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func savehandler(w http.ResponseWriter, r *http.Request) {
 	p := &lampen.Lampen{}
 	var broken bool
-	for i := range p.Values {
+	for i := 0; i < 10; i++ {
 		err := p.Parse(r.FormValue("Lampe"+strconv.Itoa(i)), i)
 		if err != nil {
 			broken = true
@@ -46,6 +46,7 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		p.Send()
 		fmt.Fprintf(w, "<h1>Erfolg</h1>"+
 			"Moodlights wurden geändert!"+
 			"<form action=\"/\" method=\"POST\">"+

@@ -3,10 +3,17 @@ package lampen
 import (
 	"encoding/json"
 	"errors"
+	"gokitchenmood/durchreiche"
 	"io/ioutil"
 	"regexp"
+	"strconv"
+	"strings"
 )
 
+const controlleradress byte = 0x10                //0x10
+const clientadress byte = 0xFE                    //0xFE
+const payloadlength byte = 0x1E                   //30 da immer 3 byte pro Lampe a 10 Lampen
+const filetowrite = "/home/philmacfly/moodlights" //Entweder file zum testen oder port wenn echt
 var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 
 type Lampen struct {
@@ -14,7 +21,24 @@ type Lampen struct {
 }
 
 func (l *Lampen) Send() error {
-	err := errors.New("Not yet implemented")
+	p := &durchreiche.Packet{}
+	for k, s := range l.Values {
+		news := strings.Replace(s, "#", "", -1)
+		for j := 0; j < 6; j += 2 {
+			i, _ := strconv.ParseUint(news[j:j+2], 16, 8)
+			b := byte(i)
+			p.Payload[k*3+(j/2)] = b
+		}
+
+	}
+	//fmt.Println(p.Payload)
+	//fmt.Println(len(payload))
+	//p.Payload = payload
+	p.Source = clientadress
+	p.Destination = controlleradress
+	p.Length = payloadlength
+	err := p.Send(filetowrite)
+	//err := errors.New("wa")
 	return err
 }
 
