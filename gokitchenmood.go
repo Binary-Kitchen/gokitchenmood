@@ -6,8 +6,11 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
+
+var filetowrite string
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	title := "moodlights"
@@ -35,6 +38,7 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+	p.Port = filetowrite
 	if broken {
 		fmt.Fprintf(w, "<h1>Fehler</h1>"+
 			"Farben entsprechen nicht dem Format \"#CCCCCC\" oder \"CCCCCC\"!"+
@@ -56,6 +60,11 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Fprintf(os.Stderr, "Usage: %s File \n", os.Args[0])
+		return
+	}
+	filetowrite = os.Args[1]
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
 	http.ListenAndServe(":8080", nil)

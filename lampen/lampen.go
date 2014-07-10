@@ -18,6 +18,7 @@ var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 
 type Lampen struct {
 	Values [10]string
+	Port   string
 }
 
 func (l *Lampen) Send() error {
@@ -37,7 +38,7 @@ func (l *Lampen) Send() error {
 	p.Source = clientadress
 	p.Destination = controlleradress
 	p.Length = payloadlength
-	err := p.Send(filetowrite)
+	err := p.Send(l.Port)
 	//err := errors.New("wa")
 	return err
 }
