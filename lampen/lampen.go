@@ -10,18 +10,18 @@ import (
 	"strings"
 )
 
-const controlleradress byte = 0x10                //0x10
-const clientadress byte = 0xFE                    //0xFE
-const payloadlength byte = 0x1E                   //30 da immer 3 byte pro Lampe a 10 Lampen
-const filetowrite = "/home/philmacfly/moodlights" //Entweder file zum testen oder port wenn echt
+const controlleradress byte = 0x10 //0x10
+const clientadress byte = 0xFE     //0xFE
+const payloadlength byte = 0x1E    //30 da immer 3 byte pro Lampe a 10 Lampen
 var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
+var File bool
 
 type Lampen struct {
 	Values [10]string
 	Port   string
 }
 
-func (l *Lampen) Send() error {
+func (l *Lampen) Send() {
 	p := &durchreiche.Packet{}
 	for k, s := range l.Values {
 		news := strings.Replace(s, "#", "", -1)
@@ -38,9 +38,8 @@ func (l *Lampen) Send() error {
 	p.Source = clientadress
 	p.Destination = controlleradress
 	p.Length = payloadlength
-	err := p.Send(l.Port)
+	p.Send(l.Port, File)
 	//err := errors.New("wa")
-	return err
 }
 
 func (l *Lampen) Parse(input string, number int) error {

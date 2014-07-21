@@ -1,9 +1,12 @@
 package durchreiche
 
 import (
+	"fmt"
+	"log"
 	"os"
 
 	"github.com/mewkiz/pkg/hashutil/crc8"
+	"github.com/tarm/goserial"
 )
 
 const preamble byte = 0x40
@@ -34,7 +37,7 @@ type Packet struct {
 	Payload     [30]byte
 }
 
-func (p *Packet) Send(filename string) error {
+func (p *Packet) Send(filename string, file bool) error {
 	tosend := []byte{}
 	tosend = append(tosend, preamble)
 	tosend = append(tosend, p.Source)
@@ -45,11 +48,24 @@ func (p *Packet) Send(filename string) error {
 	}
 	checksum := crc8.Checksum(tosend, &mytable)
 	tosend = append(tosend, byte(checksum))
-
-	fo, err := os.Create(filename)
-	if err != nil {
-		panic(err)
+	if file {
+		fo, err := os.Create(filename)
+		if err != nil {
+			panic(err)
+		}
+		fo.Write(tosend[:])
+		return err
+	} else {
+		c := &serial.Config{Name: filename, Baud: 115200}
+		fmt.Println("Serial")
+		s, err := serial.OpenPort(c)
+		if err != nil {
+			log.Fatal(err)
+		}
+		_, err = s.Write(tosend)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return err
 	}
-	fo.Write(tosend[:])
-	return err
 }

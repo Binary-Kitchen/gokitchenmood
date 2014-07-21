@@ -61,10 +61,16 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s File \n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
 		return
 	}
+	lampen.File = false
 	filetowrite = os.Args[1]
+	if len(os.Args) > 2 {
+		if os.Args[2] == "-f" {
+			lampen.File = true
+		}
+	}
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
 	http.ListenAndServe(":8080", nil)
