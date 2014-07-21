@@ -19,7 +19,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error loading Config File")
 		for i := range p.Values {
-			p.Values[i] = "#000000"
+			p.Values[i] = "000000"
 
 		}
 	}
@@ -59,6 +59,10 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func statichandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, r.URL.Path[1:])
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
@@ -73,5 +77,6 @@ func main() {
 	}
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
+	http.HandleFunc("/static/", statichandler)
 	http.ListenAndServe(":8080", nil)
 }

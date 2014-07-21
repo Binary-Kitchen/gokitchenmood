@@ -1,15 +1,22 @@
+<html>
+<head>
+	<title>Moodlights Setting</title>
+</head>
+<body>
 <h1>Binary Kitchen Moodlights</h1>
-
+<script type="text/javascript" src="static/jscolor.js"></script>
 <form action="/save" method="POST">
-<div>Lampe0: <input type="text" name="Lampe0" value={{index .Values 0}} maxlength="7"></div>
-<div>Lampe1: <input type="text" name="Lampe1" value={{index .Values 1}} maxlength="7"></div>
-<div>Lampe2: <input type="text" name="Lampe2" value={{index .Values 2}} maxlength="7"></div>
-<div>Lampe3: <input type="text" name="Lampe3" value={{index .Values 3}} maxlength="7"></div>
-<div>Lampe4: <input type="text" name="Lampe4" value={{index .Values 4}} maxlength="7"></div>
-<div>Lampe5: <input type="text" name="Lampe5" value={{index .Values 5}} maxlength="7"></div>
-<div>Lampe6: <input type="text" name="Lampe6" value={{index .Values 6}} maxlength="7"></div>
-<div>Lampe7: <input type="text" name="Lampe7" value={{index .Values 7}} maxlength="7"></div>
-<div>Lampe8: <input type="text" name="Lampe8" value={{index .Values 8}} maxlength="7"></div>
-<div>Lampe9: <input type="text" name="Lampe9" value={{index .Values 9}} maxlength="7"></div>
+<div>Lampe0: <input class="color" name="Lampe0" value={{index .Values 0}}></div>
+<div>Lampe1: <input class="color" name="Lampe1" value={{index .Values 1}}></div>
+<div>Lampe2: <input class="color" name="Lampe2" value={{index .Values 2}}></div>
+<div>Lampe3: <input class="color" name="Lampe3" value={{index .Values 3}}></div>
+<div>Lampe4: <input class="color" name="Lampe4" value={{index .Values 4}}></div>
+<div>Lampe5: <input class="color" name="Lampe5" value={{index .Values 5}}></div>
+<div>Lampe6: <input class="color" name="Lampe6" value={{index .Values 6}}></div>
+<div>Lampe7: <input class="color" name="Lampe7" value={{index .Values 7}}></div>
+<div>Lampe8: <input class="color" name="Lampe8" value={{index .Values 8}}></div>
+<div>Lampe9: <input class="color" name="Lampe9" value={{index .Values 9}}></div>
 <div><input type="submit" value="Save"></div>
 </form>
+</body>
+</html>
