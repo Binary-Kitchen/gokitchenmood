@@ -6,16 +6,18 @@
 <h1>Binary Kitchen Moodlights</h1>
 <script type="text/javascript" src="static/jscolor.js"></script>
 <form action="/save" method="POST">
-<div>Lampe Treppenhaus: <input class="color" name="Lampe0" value={{index .Values 0}}></div>
-<div>Lampe Telefon: <input class="color" name="Lampe1" value={{index .Values 1}}></div>
-<div>Lampe rotes Sofa: <input class="color" name="Lampe2" value={{index .Values 2}}></div>
-<div>Lampe Regal: <input class="color" name="Lampe3" value={{index .Values 3}}></div>
-<div>Lampe Matrix: <input class="color" name="Lampe4" value={{index .Values 4}}></div>
-<div>Lampe Küche: <input class="color" name="Lampe5" value={{index .Values 5}}></div>
-<div>Lampe Getränkeautomat: <input class="color" name="Lampe6" value={{index .Values 6}}></div>
-<div>Lampe Server: <input class="color" name="Lampe7" value={{index .Values 7}}></div>
-<div>Lampe8: <input class="color" name="Lampe8" value={{index .Values 8}}></div>
-<div>Lampe9: <input class="color" name="Lampe9" value={{index .Values 9}}></div>
+<table style="border:0">
+<tr><td><div>Lampe Treppenhaus: </td><td><input class="color" name="Lampe0" value={{index .Values 0}}></div></td></tr>
+<tr><td><div>Lampe Telefon: </td><td><input class="color" name="Lampe1" value={{index .Values 1}}></div></td></tr>
+<tr><td><div>Lampe rotes Sofa: </td><td><input class="color" name="Lampe2" value={{index .Values 2}}></div></td></tr>
+<tr><td><div>Lampe Regal: </td><td><input class="color" name="Lampe3" value={{index .Values 3}}></div></td></tr>
+<tr><td><div>Lampe Matrix: </td><td><input class="color" name="Lampe4" value={{index .Values 4}}></div></td></tr>
+<tr><td><div>Lampe Küche: </td><td><input class="color" name="Lampe5" value={{index .Values 5}}></div></td></tr>
+<tr><td><div>Lampe Getränkeautomat: </td><td><input class="color" name="Lampe6" value={{index .Values 6}}></div></td></tr>
+<tr><td><div>Lampe Server: </td><td><input class="color" name="Lampe7" value={{index .Values 7}}></div></td></tr>
+<tr><td><div>Lampe8: </td><td><input class="color" name="Lampe8" value={{index .Values 8}}></div></td></tr>
+<tr><td><div>Lampe9: </td><td><input class="color" name="Lampe9" value={{index .Values 9}}></div></td></tr>
+</table>
 <div><input type="submit" value="Save"></div>
 </form>
 </body>
