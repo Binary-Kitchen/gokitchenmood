@@ -40,22 +40,16 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 	}
 	p.Port = filetowrite
 	if broken {
-		fmt.Fprintf(w, "<h1>Fehler</h1>"+
-			"Farben entsprechen nicht dem Format \"#CCCCCC\" oder \"CCCCCC\"!"+
-			"<form action=\"/\" method=\"POST\">"+
-			"<div><input type=\"submit\" value=\"Back\"></div>"+
-			"</form>")
+		t, _ := template.ParseFiles("error.html")
+		t.Execute(w, p)
 	} else {
 		err := p.WriteLampValues("moodlights")
 		if err != nil {
 			log.Fatal(err)
 		}
 		p.Send()
-		fmt.Fprintf(w, "<h1>Erfolg</h1>"+
-			"Moodlights wurden geändert!"+
-			"<form action=\"/\" method=\"POST\">"+
-			"<div><input type=\"submit\" value=\"Back\"></div>"+
-			"</form>")
+		t, _ := template.ParseFiles("success.html")
+		t.Execute(w, p)
 	}
 }
 
