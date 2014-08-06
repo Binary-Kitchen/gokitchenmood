@@ -1,24 +1,84 @@
+<!DOCTYPE html>
 <html>
 <head>
-	<title>Moodlights Setting</title>
+  <title>Moodlights Setting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <script type="text/javascript" src="static/jscolor.js"></script>
+  <script type="text/javascript" src="static/bootstrap-3.2.0-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="static/bootstrap-3.2.0-dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="static/bootstrap-3.2.0-dist/css/bootstrap-theme.min.css"/>
+  <link rel="stylesheet" type="text/css" href="static/custom.css"/>
 </head>
 <body>
-<h1>Binary Kitchen Moodlights</h1>
-<script type="text/javascript" src="static/jscolor.js"></script>
-<form action="/save" method="POST">
-<table style="border:0">
-<tr><td><div>Lampe Treppenhaus: </td><td><input class="color" name="Lampe0" value={{index .Values 0}}></div></td></tr>
-<tr><td><div>Lampe Telefon: </td><td><input class="color" name="Lampe1" value={{index .Values 1}}></div></td></tr>
-<tr><td><div>Lampe rotes Sofa: </td><td><input class="color" name="Lampe2" value={{index .Values 2}}></div></td></tr>
-<tr><td><div>Lampe Regal: </td><td><input class="color" name="Lampe3" value={{index .Values 3}}></div></td></tr>
-<tr><td><div>Lampe Matrix: </td><td><input class="color" name="Lampe4" value={{index .Values 4}}></div></td></tr>
-<tr><td><div>Lampe Küche: </td><td><input class="color" name="Lampe5" value={{index .Values 5}}></div></td></tr>
-<tr><td><div>Lampe Getränkeautomat: </td><td><input class="color" name="Lampe6" value={{index .Values 6}}></div></td></tr>
-<tr><td><div>Lampe Server: </td><td><input class="color" name="Lampe7" value={{index .Values 7}}></div></td></tr>
-<tr><td><div>Lampe8: </td><td><input class="color" name="Lampe8" value={{index .Values 8}}></div></td></tr>
-<tr><td><div>Lampe9: </td><td><input class="color" name="Lampe9" value={{index .Values 9}}></div></td></tr>
-</table>
-<div><input type="submit" value="Save"></div>
-</form>
+<div class="container-fluid">
+  <div class="page-header">
+    <img src="static/logo.svg" class="logo img-rounded"><h1>Moodlights</h1>
+  </div>
+  <form action="/save" method="POST" class="form-horizontal">
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Treppenhaus:</div>
+        <input class="color form-control" name="Lampe0" value={{index .Values 0}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Telefon:</div>
+        <input class="color form-control" name="Lampe1" value={{index .Values 1}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Rotes Sofa:</div>
+        <input class="color form-control" name="Lampe2" value={{index .Values 2}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Regal:</div>
+        <input class="color form-control" name="Lampe3" value={{index .Values 3}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Matrix:</div>
+        <input class="color form-control" name="Lampe4" value={{index .Values 4}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Küche:</div>
+        <input class="color form-control" name="Lampe5" value={{index .Values 5}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Getränkeautomat:</div>
+        <input class="color form-control" name="Lampe6" value={{index .Values 6}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Server:</div>
+        <input class="color form-control" name="Lampe7" value={{index .Values 7}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Linkes Fenster:</div>
+        <input class="color form-control" name="Lampe8" value={{index .Values 8}}>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-group">
+        <div class="input-group-addon">Rechts Fenster:</div>
+        <input class="color form-control" name="Lampe9" value={{index .Values 9}}>
+      </div>
+    </div>
+    <div class="radio">
+      <input class="btn btn-success" type="submit" value="Save">
+    </div>
+  </form>
+</div>
 </body>
 </html>
