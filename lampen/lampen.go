@@ -43,13 +43,15 @@ func (l *Lampen) Send() {
 }
 
 func (l *Lampen) Parse(input string, number int) error {
+	var reterr error
 	if validColor.MatchString(input) {
 		l.Values[number] = input
-		return nil
+		reterr = nil
 	} else {
 		err := errors.New("String does not match Color Regex")
-		return err
+		reterr = err
 	}
+	return reterr
 }
 
 func (l *Lampen) LoadLampValues(filename string) error {
