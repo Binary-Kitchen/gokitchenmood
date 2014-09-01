@@ -48,6 +48,7 @@ func (p *Packet) Send(filename string, file bool) error {
 	}
 	checksum := crc8.Checksum(tosend, &mytable)
 	tosend = append(tosend, byte(checksum))
+	fmt.Println(tosend)
 	if file {
 		fo, err := os.Create(filename)
 		if err != nil {
