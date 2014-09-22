@@ -78,3 +78,13 @@ func (l *Lampen) WriteLampValues(filename string) error {
 	}
 	return nil
 }
+
+func (l *Lampen) SetLampstosavedValues(filename string) error {
+	err := l.LoadLampValues(filename)
+	if err != nil {
+		l.Send()
+		return nil
+	} else {
+		return err
+	}
+}

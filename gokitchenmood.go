@@ -69,6 +69,8 @@ func main() {
 			lampen.File = true
 		}
 	}
+	p := &lampen.Lampen{}
+	p.SetLampstosavedValues("moodlights")
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
 	http.HandleFunc("/static/", statichandler)
