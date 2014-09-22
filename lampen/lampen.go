@@ -5,9 +5,12 @@ import (
 	"errors"
 	"gokitchenmood/durchreiche"
 	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/ant0ine/go-json-rest/rest"
 )
 
 const controlleradress byte = 0x10 //0x10
@@ -15,10 +18,10 @@ const clientadress byte = 0xFE     //0xFE
 const payloadlength byte = 0x1E    //30 da immer 3 byte pro Lampe a 10 Lampen
 var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 var File bool
+var Port string
 
 type Lampen struct {
 	Values [10]string
-	Port   string
 }
 
 func (l *Lampen) Send() {
@@ -38,7 +41,7 @@ func (l *Lampen) Send() {
 	p.Source = clientadress
 	p.Destination = controlleradress
 	p.Length = payloadlength
-	p.Send(l.Port, File)
+	p.Send(Port, File)
 	//err := errors.New("wa")
 }
 
@@ -81,10 +84,29 @@ func (l *Lampen) WriteLampValues(filename string) error {
 
 func (l *Lampen) SetLampstosavedValues(filename string) error {
 	err := l.LoadLampValues(filename)
-	if err != nil {
+	if err == nil {
 		l.Send()
 		return nil
 	} else {
 		return err
 	}
+}
+
+func (l *Lampen) GetAllLamps(w rest.ResponseWriter, r *rest.Request) {
+	err := l.LoadLampValues("moodlights")
+	if err == nil {
+		w.WriteJson(&l)
+	} else {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+
+	}
+}
+
+func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
+	err := r.DecodeJsonPayload(&l)
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	l.Send()
 }

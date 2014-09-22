@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/ant0ine/go-json-rest/rest"
 )
 
 var filetowrite string
@@ -38,7 +40,6 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	p.Port = filetowrite
 	if broken {
 		t, _ := template.ParseFiles("error.html")
 		t.Execute(w, p)
@@ -69,10 +70,31 @@ func main() {
 			lampen.File = true
 		}
 	}
-	p := &lampen.Lampen{}
-	p.SetLampstosavedValues("moodlights")
+
+	lampen.Port = filetowrite
+
+	lampe := &lampen.Lampen{}
+	lampe.SetLampstosavedValues("moodlights")
+
+	rhandler := rest.ResourceHandler{
+		EnableRelaxedContentType: true,
+		EnableStatusService:      true,
+		XPoweredBy:               "phil-api",
+	}
+	err := rhandler.SetRoutes(
+		rest.RouteObjectMethod("GET", "/lamps", lampe, "GetAllLamps"),
+		rest.RouteObjectMethod("POST", "/setlamps", lampe, "PostLamps"),
+		//rest.RouteObjectMethod("GET", "/users/:id", &users, "GetUser"),
+		//rest.RouteObjectMethod("PUT", "/users/:id", &users, "PutUser"),
+		//rest.RouteObjectMethod("DELETE", "/users/:id", &users, "DeleteUser"),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
 	http.HandleFunc("/static/", statichandler)
+	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 	http.ListenAndServe(":8080", nil)
 }
