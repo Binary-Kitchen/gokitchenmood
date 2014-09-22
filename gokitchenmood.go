@@ -58,6 +58,12 @@ func statichandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, r.URL.Path[1:])
 }
 
+func randomhandler(w http.ResponseWriter, r *http.Request) {
+	p := &lampen.Lampen{}
+	p.SetRandom()
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
@@ -82,8 +88,13 @@ func main() {
 		XPoweredBy:               "phil-api",
 	}
 	err := rhandler.SetRoutes(
-		rest.RouteObjectMethod("GET", "/lamps", lampe, "GetAllLamps"),
-		rest.RouteObjectMethod("POST", "/setlamps", lampe, "PostLamps"),
+		rest.RouteObjectMethod("GET", "/lamps/get", lampe, "GetAllLamps"),
+		rest.RouteObjectMethod("POST", "/lamps/set", lampe, "PostLamps"),
+		&rest.Route{"GET", "/.status",
+			func(w rest.ResponseWriter, r *rest.Request) {
+				w.WriteJson(rhandler.GetStatus())
+			},
+		},
 		//rest.RouteObjectMethod("GET", "/users/:id", &users, "GetUser"),
 		//rest.RouteObjectMethod("PUT", "/users/:id", &users, "PutUser"),
 		//rest.RouteObjectMethod("DELETE", "/users/:id", &users, "DeleteUser"),
@@ -94,6 +105,7 @@ func main() {
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
+	http.HandleFunc("/random", randomhandler)
 	http.HandleFunc("/static/", statichandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 	http.ListenAndServe(":8080", nil)

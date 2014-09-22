@@ -5,10 +5,12 @@ import (
 	"errors"
 	"gokitchenmood/durchreiche"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/ant0ine/go-json-rest/rest"
 )
@@ -108,5 +110,28 @@ func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	l.Send()
+}
+
+func strtohex(color int64) string {
+	news := strconv.FormatInt(color, 16)
+	if len(news) < 2 {
+		news = "0" + news
+	}
+	return news
+
+}
+
+func (l *Lampen) SetRandom() {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i, _ := range l.Values {
+		colorr := r.Int63n(255)
+		colorg := r.Int63n(255)
+		colorb := r.Int63n(255)
+		l.Values[i] = strtohex(colorr)
+		l.Values[i] = l.Values[i] + strtohex(colorg)
+		l.Values[i] = l.Values[i] + strtohex(colorb)
+	}
+	l.WriteLampValues("moodlights")
 	l.Send()
 }
