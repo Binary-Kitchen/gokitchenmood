@@ -94,7 +94,7 @@ func (l *Lampen) SetLampstosavedValues(filename string) error {
 	}
 }
 
-func (l *Lampen) GetAllLamps(w rest.ResponseWriter, r *rest.Request) {
+func (l *Lampen) GetLamps(w rest.ResponseWriter, r *rest.Request) {
 	err := l.LoadLampValues("moodlights")
 	if err == nil {
 		w.WriteJson(&l)
