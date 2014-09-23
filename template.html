@@ -14,6 +14,8 @@
   <div class="page-header">
     <img src="static/logo.svg" class="logo img-rounded"><h1>Moodlights</h1>
   </div>
+  <div class="row">
+  <div class="col-md-3">
   <form action="/save" method="POST" class="form-horizontal">
     <div class="row">
       <div class="input-group">
@@ -79,11 +81,50 @@
       <input class="btn btn-success" type="submit" value="Save">
     </div>
   </form>
+  </div>
+  <div class="col-md-3">
   <form action="/random" method="POST" class="form-horizontal">
-      <div class="radio">
-      <input class="btn btn-success" type="submit" value="Random">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Random">
     </div>
-  <form>
+  </form>
+  <form action="/set?color=FF0000" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Rot">
+    </div>
+  </form>
+  <form action="/set?color=00FF00" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Grün">
+    </div>
+  </form>
+  <form action="/set?color=0000FF" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Blau">
+    </div>
+  </form>
+  <form action="/set?color=FFFF00" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Gelb">
+    </div>
+  </form>
+  <form action="/set?color=FF00FF" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Lila">
+    </div>
+  </form>
+  <form action="/set?color=FFFFFF" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Weiß">
+    </div>
+  </form>
+  <form action="/set?color=000000" method="POST" class="form-horizontal">
+    <div class="radio">
+      <input class="btn btn-primary" type="submit" value="Aus">
+    </div>
+  </form>
+  </div>
+  </div>
 </div>
 </body>
 </html>

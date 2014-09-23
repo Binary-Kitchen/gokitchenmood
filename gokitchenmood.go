@@ -54,6 +54,17 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func sethandler(w http.ResponseWriter, r *http.Request) {
+	p := &lampen.Lampen{}
+	color := r.FormValue("color")
+	for i, _ := range p.Values {
+		p.Values[i] = color
+	}
+	p.WriteLampValues("moodlights")
+	p.Send()
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
 func statichandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, r.URL.Path[1:])
 }
@@ -105,6 +116,7 @@ func main() {
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)
+	http.HandleFunc("/set", sethandler)
 	http.HandleFunc("/random", randomhandler)
 	http.HandleFunc("/static/", statichandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
