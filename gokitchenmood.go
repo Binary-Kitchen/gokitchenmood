@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gokitchenmood/lampen"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -75,6 +76,38 @@ func randomhandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
+func recieveHandler(w http.ResponseWriter, r *http.Request) {
+	file, header, err := r.FormFile("file") // the FormFile function takes in the POST input id file
+	defer file.Close()
+
+	if err != nil {
+		fmt.Fprintln(w, err)
+		return
+	}
+
+	out, err := os.Create("uploaded/" + file.Name())
+	if err != nil {
+		fmt.Fprintf(w, "Unable to create the file for writing. Check your write access privilege")
+		return
+	}
+
+	defer out.Close()
+
+	// write the content from POST to the file
+	_, err = io.Copy(out, file)
+	if err != nil {
+		fmt.Fprintln(w, err)
+	}
+
+	fmt.Fprintf(w, "File uploaded successfully : ")
+	fmt.Fprintf(w, header.Filename)
+}
+
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("upload.html")
+	t.Execute(w, nil)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
@@ -119,6 +152,8 @@ func main() {
 	http.HandleFunc("/set", sethandler)
 	http.HandleFunc("/random", randomhandler)
 	http.HandleFunc("/static/", statichandler)
+	http.HandleFunc("/receive", recieveHandler)
+	http.HandleFunc("/upload", uploadHandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 	http.ListenAndServe(":8080", nil)
 }
