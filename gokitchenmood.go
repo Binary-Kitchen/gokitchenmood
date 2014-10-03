@@ -5,6 +5,7 @@ import (
 	"gokitchenmood/lampen"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -129,8 +130,15 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func scriptHandler(w http.ResponseWriter, r *http.Request) {
+
+	files, _ := ioutil.ReadDir("uploaded/")
+	listing := ""
+	for _, f := range files {
+		listing = listing + "<option>" + template.HTMLEscapeString(f.Name()) + "</option>"
+	}
+
 	t, _ := template.ParseFiles("templates/script.html")
-	t.Execute(w, nil)
+	t.Execute(w, template.HTML(listing))
 
 }
 
