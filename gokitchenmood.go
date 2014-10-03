@@ -161,6 +161,7 @@ func main() {
 	http.HandleFunc("/receive", recieveHandler)
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/script", scriptHandler)
+	http.HandleFunc("/templates", statichandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 	http.ListenAndServe(":8080", nil)
 }
