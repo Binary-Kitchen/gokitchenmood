@@ -11,8 +11,10 @@ import (
 	"strconv"
 
 	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/fatih/color"
 )
 
+var uploadalert string
 var filetowrite string
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +89,11 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 
 	out, err := os.Create("uploaded/" + header.Filename)
 	if err != nil {
-		fmt.Fprintf(w, "Unable to create file: %s", err.Error())
+		//fmt.Fprintf(w, "Unable to create file: %s", err.Error())
+
+		errstring := err.Error()
+		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> Unable to create file: " + errstring + "</div>"
+		http.Redirect(w, r, "/upload", http.StatusFound)
 		return
 	}
 
@@ -96,16 +102,30 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 	// write the content from POST to the file
 	_, err = io.Copy(out, file)
 	if err != nil {
-		fmt.Fprintln(w, err)
+		//fmt.Fprintln(w, err)
+
+		errstring := err.Error()
+		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> " + errstring + "</div>"
+		http.Redirect(w, r, "/upload", http.StatusFound)
+		return
 	}
 
-	fmt.Fprintf(w, "File uploaded successfully : ")
-	fmt.Fprintf(w, header.Filename)
+	uploadalert = "<div class=\"alert alert-success\" role=\"alert\"><b>Well done!</b> File uploaded</div>"
+	http.Redirect(w, r, "/upload", http.StatusFound)
+
+	fmt.Println(color.GreenString("Info: "), "File uploaded successfully : ", header.Filename)
+
+	//fmt.Fprintf(w, "File uploaded successfully : ")
+	//fmt.Fprintf(w, header.Filename)
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/upload.html")
-	t.Execute(w, nil)
+	err := t.Execute(w, template.HTML(uploadalert))
+	if err != nil {
+		fmt.Println("There was an error:", err)
+	}
+	uploadalert = ""
 }
 
 func scriptHandler(w http.ResponseWriter, r *http.Request) {
