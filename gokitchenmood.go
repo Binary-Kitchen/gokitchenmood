@@ -85,9 +85,9 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	out, err := os.Create("uploaded/blub")
+	out, err := os.Create("uploaded/" + header.Filename)
 	if err != nil {
-		fmt.Fprintf(w, "Unable to create the file for writing. Check your write access privilege")
+		fmt.Fprintf(w, "Unable to create file: %s", err.Error())
 		return
 	}
 
