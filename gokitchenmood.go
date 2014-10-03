@@ -26,7 +26,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 		}
 	}
-	t, _ := template.ParseFiles("template.html")
+	t, _ := template.ParseFiles("templates/template.html")
 	t.Execute(w, p)
 
 }
@@ -42,7 +42,7 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if broken {
-		t, _ := template.ParseFiles("error.html")
+		t, _ := template.ParseFiles("templates/error.html")
 		t.Execute(w, p)
 	} else {
 		err := p.WriteLampValues("moodlights")
@@ -50,7 +50,7 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		p.Send()
-		t, _ := template.ParseFiles("success.html")
+		t, _ := template.ParseFiles("templates/success.html")
 		t.Execute(w, p)
 	}
 }
@@ -85,7 +85,7 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	out, err := os.Create("uploaded/" + file.Name())
+	out, err := os.Create("uploaded/blub")
 	if err != nil {
 		fmt.Fprintf(w, "Unable to create the file for writing. Check your write access privilege")
 		return
@@ -104,8 +104,14 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("upload.html")
+	t, _ := template.ParseFiles("templates/upload.html")
 	t.Execute(w, nil)
+}
+
+func scriptHandler(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("templates/script.html")
+	t.Execute(w, nil)
+
 }
 
 func main() {
@@ -154,6 +160,7 @@ func main() {
 	http.HandleFunc("/static/", statichandler)
 	http.HandleFunc("/receive", recieveHandler)
 	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/script", scriptHandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 	http.ListenAndServe(":8080", nil)
 }

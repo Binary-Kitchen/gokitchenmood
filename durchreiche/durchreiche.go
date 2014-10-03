@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/mewkiz/pkg/hashutil/crc8"
+	"github.com/mewpkg/hashutil/crc8"
 	"github.com/tarm/goserial"
 )
 
