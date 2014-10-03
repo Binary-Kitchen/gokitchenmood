@@ -158,8 +158,8 @@ func main() {
 		XPoweredBy:               "phil-api",
 	}
 	err := rhandler.SetRoutes(
-		rest.RouteObjectMethod("GET", "/lamps/get", lampe, "GetLamps"),
-		rest.RouteObjectMethod("POST", "/lamps/set", lampe, "PostLamps"),
+		rest.RouteObjectMethod("GET", "/lamps", lampe, "GetLamps"),
+		rest.RouteObjectMethod("POST", "/lamps", lampe, "PostLamps"),
 		&rest.Route{"GET", "/.status",
 			func(w rest.ResponseWriter, r *rest.Request) {
 				w.WriteJson(rhandler.GetStatus())
