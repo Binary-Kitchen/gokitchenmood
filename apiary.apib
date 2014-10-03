@@ -7,25 +7,45 @@ Moodlight API is a short API do access the LED-Lamps in the Binary Kitchen Hacke
 # Group Lamps
 Lamps related resources of the **Moodlights API**
 
-## Lamps [/lamp/get]
+## Lamps [/lamps]
 ### List all Lamps [GET]
 + Response 200 (application/json)
 
-        [{
-          "id": 1, "title": "Jogging in park"
-        }, {
-          "id": 2, "title": "Pick-up posters from post-office"
-        }]
+        {
+            "Values": [
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00"
+                        ]
+        }
 
-## Lamps [/lamp/set]
 ### Set the Lamps [POST]
 + Request (application/json)
 
-        { "title": "Buy cheese and bread for breakfast." }
+        {
+            "Values": [
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00",
+                "FFFF00"
+                        ]
+        }
 
-+ Response 201 (application/json)
++ Response 200 (text/plain)
 
-        { "id": 3, "title": "Buy cheese and bread for breakfast." }
 
 # Group Statistics
 ## Status [/.status]
