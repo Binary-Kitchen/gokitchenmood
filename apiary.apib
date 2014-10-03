@@ -1,0 +1,51 @@
+FORMAT: 1A
+HOST: homer:8080/api
+
+# Moodlights API
+Moodlight API is a short API do access the LED-Lamps in the Binary Kitchen Hackerspace
+
+# Group Lamps
+Lamps related resources of the **Moodlights API**
+
+## Lamps [/lamp/get]
+### List all Lamps [GET]
++ Response 200 (application/json)
+
+        [{
+          "id": 1, "title": "Jogging in park"
+        }, {
+          "id": 2, "title": "Pick-up posters from post-office"
+        }]
+
+## Lamps [/lamp/set]
+### Set the Lamps [POST]
++ Request (application/json)
+
+        { "title": "Buy cheese and bread for breakfast." }
+
++ Response 201 (application/json)
+
+        { "id": 3, "title": "Buy cheese and bread for breakfast." }
+
+# Group Statistics
+## Status [/.status]
+### Get Status of the API [GET]
++ Response 200 (application/json)
+
+        {
+          "Pid": 9471,
+          "UpTime": "144h11m50.181089647s",
+          "UpTimeSec": 519110.181089647,
+          "Time": "2014-10-02 09:19:41.324494314 +0000 UTC",
+          "TimeUnix": 1412241581,
+          "StatusCodeCount": {
+            "200": 214,
+            "404": 2
+          },
+          "TotalCount": 216,
+          "TotalResponseTime": "890.961569ms",
+          "TotalResponseTimeSec": 0.890961569,
+          "AverageResponseTime": "4.124822ms",
+          "AverageResponseTimeSec": 0.004124822
+        }
+
