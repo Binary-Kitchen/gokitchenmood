@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"gokitchenmood/lampen"
 	"io/ioutil"
+	"time"
+
 	"github.com/stevedonovan/luar"
 )
 
 var p *lampen.Lampen = &lampen.Lampen{}
-var run bool = true
+var transfer = make(chan bool, 1)
+var repeatstopped = true
 
 func setLamps(id int, value string) error {
 	return p.Parse(value, id)
@@ -27,7 +30,6 @@ func resetLamps() {
 func repeatScript(content string) {
 	L := luar.Init()
 	defer L.Close()
-
 	// arbitrary Go functions can be registered
 	// to be callable from Lua
 	luar.Register(L, "", luar.Map{
@@ -35,32 +37,41 @@ func repeatScript(content string) {
 		"sendLamps":  sendLamps,
 		"resetLamps": resetLamps,
 	})
-	for {
-		fmt.Println("blub")
-		res := L.DoString(string(content))
-		if res != nil {
-			run = false
-		}
-		if run == false {
-			fmt.Println("waswfdqwef")
-			break
-			run = true
+	//fmt.Println("Cont:", cont, "More:", more)
+	cont := true
+	more := true
+	for cont {
+		select {
+		case cont, more = <-transfer:
+			if !more {
+				cont = false
+			}
+		default:
+			L.DoString(string(content))
+			//cont = <-transfer
+			//fmt.Println("Cont in:", cont)
 		}
 	}
+	repeatstopped = true
+	fmt.Println("Bye Bye")
 	//return nil
 }
 
 func RunScript(script string) error {
-	for !run {
+	transfer <- false
+	close(transfer)
+	for !repeatstopped {
+		time.Sleep(1 * time.Second)
 	}
-	fmt.Println("===============================================================================================")
 	contents, err := ioutil.ReadFile("uploaded/" + script)
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(contents))
-
+	//fmt.Println(string(contents))
+	transfer = make(chan bool, 1)
+	transfer <- true
+	repeatstopped = false
 	go repeatScript(string(contents))
-
+	//transfer <- true
 	return nil
 }

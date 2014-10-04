@@ -155,7 +155,7 @@ func scriptHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func setscriptHandler(w http.ResponseWriter, r *http.Request) {
-	go script.RunScript(r.FormValue("scripts"))
+	script.RunScript(r.FormValue("scripts"))
 	http.Redirect(w, r, "/script", http.StatusFound)
 }
 
