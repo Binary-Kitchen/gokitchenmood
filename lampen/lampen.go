@@ -29,6 +29,7 @@ type Lampen struct {
 func (l *Lampen) Send() {
 	p := &durchreiche.Packet{}
 	for k, s := range l.Values {
+		//	fmt.Println(s)
 		news := strings.Replace(s, "#", "", -1)
 		for j := 0; j < 6; j += 2 {
 			i, _ := strconv.ParseUint(news[j:j+2], 16, 8)
@@ -48,15 +49,19 @@ func (l *Lampen) Send() {
 }
 
 func (l *Lampen) Parse(input string, number int) error {
-	var reterr error
-	if validColor.MatchString(input) {
-		l.Values[number] = input
-		reterr = nil
+	if number < 10 {
+		if validColor.MatchString(input) {
+			l.Values[number] = input
+			return nil
+		} else {
+			err := errors.New("String does not match Color Regex")
+			return err
+		}
 	} else {
-		err := errors.New("String does not match Color Regex")
-		reterr = err
+		err := errors.New("ID is not in Range")
+		return err
 	}
-	return reterr
+
 }
 
 func (l *Lampen) LoadLampValues(filename string) error {

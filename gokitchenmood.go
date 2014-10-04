@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"gokitchenmood/lampen"
+	"gokitchenmood/script"
 	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/ant0ine/go-json-rest/rest"
@@ -88,6 +90,14 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(filepath.Ext(header.Filename))
+
+	if filepath.Ext(header.Filename) != ".lua" {
+		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> File doesn't have .lua extension</div>"
+		http.Redirect(w, r, "/upload", http.StatusFound)
+		return
+	}
+
 	out, err := os.Create("uploaded/" + header.Filename)
 	if err != nil {
 		//fmt.Fprintf(w, "Unable to create file: %s", err.Error())
@@ -114,7 +124,7 @@ func recieveHandler(w http.ResponseWriter, r *http.Request) {
 	uploadalert = "<div class=\"alert alert-success\" role=\"alert\"><b>Well done!</b> File uploaded</div>"
 	http.Redirect(w, r, "/upload", http.StatusFound)
 
-	fmt.Println(color.GreenString("Info: "), "File uploaded successfully : ", header.Filename)
+	fmt.Println(color.GreenString("Info:"), "File uploaded successfully:", header.Filename)
 
 	//fmt.Fprintf(w, "File uploaded successfully : ")
 	//fmt.Fprintf(w, header.Filename)
@@ -134,12 +144,19 @@ func scriptHandler(w http.ResponseWriter, r *http.Request) {
 	files, _ := ioutil.ReadDir("uploaded/")
 	listing := ""
 	for _, f := range files {
-		listing = listing + "<option>" + template.HTMLEscapeString(f.Name()) + "</option>"
+		if filepath.Ext(f.Name()) == ".lua" {
+			listing = listing + "<option>" + template.HTMLEscapeString(f.Name()) + "</option>"
+		}
 	}
 
 	t, _ := template.ParseFiles("templates/script.html")
 	t.Execute(w, template.HTML(listing))
 
+}
+
+func setscriptHandler(w http.ResponseWriter, r *http.Request) {
+	go script.RunScript(r.FormValue("scripts"))
+	http.Redirect(w, r, "/script", http.StatusFound)
 }
 
 func main() {
@@ -189,6 +206,7 @@ func main() {
 	http.HandleFunc("/receive", recieveHandler)
 	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/script", scriptHandler)
+	http.HandleFunc("/setscript", setscriptHandler)
 	http.HandleFunc("/templates", statichandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 	http.ListenAndServe(":8080", nil)
