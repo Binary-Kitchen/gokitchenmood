@@ -5,4 +5,4 @@ Webcontroll for Binary Kitchen Moodlights
 
 API
 ============
-INCLUDE "apiary.apib"
+!INCLUDE "apiary.apib"
