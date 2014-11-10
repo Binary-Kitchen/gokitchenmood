@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -23,6 +24,7 @@ var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 var File bool
 var Port string
 var Limit int
+var HardLimit int
 
 type Lampen struct {
 	Values [10]string
@@ -48,6 +50,8 @@ func (l *Lampen) Send() {
 	p.Length = payloadlength
 	p.Send(Port, File)
 	//err := errors.New("wa")
+	HardLimit--
+	log.Println("HardLimit: ", HardLimit)
 }
 
 func (l *Lampen) Parse(input string, number int) error {
