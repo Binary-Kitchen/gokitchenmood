@@ -3,7 +3,6 @@ package lampen
 import (
 	"encoding/json"
 	"errors"
-	"gokitchenmood/durchreiche"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"gokitchenmood/durchreiche"
 
 	"github.com/ant0ine/go-json-rest/rest"
 )
@@ -111,7 +112,7 @@ func (l *Lampen) GetLamps(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
-	if Limit == 0 {
+	if Limit != 0 {
 		err := r.DecodeJsonPayload(&l)
 		if err != nil {
 			Limit = Limit - 10
