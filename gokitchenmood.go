@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/ant0ine/go-json-rest/rest"
 	"github.com/fatih/color"
@@ -197,6 +198,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	lampen.Limit = 100
+
+	ticker := time.NewTicker(time.Second * 1)
+	go func() {
+		for _ = range ticker.C {
+			lampen.Limit++
+			if lampen.Limit > 100 {
+				lampen.Limit = 100
+			}
+		}
+	}()
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)

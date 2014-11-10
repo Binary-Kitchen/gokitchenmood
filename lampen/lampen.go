@@ -21,6 +21,7 @@ const payloadlength byte = 0x1E    //30 da immer 3 byte pro Lampe a 10 Lampen
 var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 var File bool
 var Port string
+var Limit int
 
 type Lampen struct {
 	Values [10]string
@@ -30,9 +31,9 @@ func (l *Lampen) Send() {
 	p := &durchreiche.Packet{}
 	for k, s := range l.Values {
 		//	fmt.Println(s)
-		news := strings.Replace(s, "#", "", -1)
+		newS := strings.Replace(s, "#", "", -1)
 		for j := 0; j < 6; j += 2 {
-			i, _ := strconv.ParseUint(news[j:j+2], 16, 8)
+			i, _ := strconv.ParseUint(newS[j:j+2], 16, 8)
 			b := byte(i)
 			p.Payload[k*3+(j/2)] = b
 		}
@@ -110,12 +111,20 @@ func (l *Lampen) GetLamps(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
-	err := r.DecodeJsonPayload(&l)
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if Limit == 0 {
+		err := r.DecodeJsonPayload(&l)
+		if err != nil {
+			Limit = Limit - 10
+			rest.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		} else {
+			l.Send()
+			Limit--
+		}
+	} else {
+
+		rest.Error(w, "Gehweg", http.StatusTeapot)
 	}
-	l.Send()
 }
 
 func strtohex(color int64) string {
