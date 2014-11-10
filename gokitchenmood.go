@@ -62,7 +62,7 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 			t.Execute(w, p)
 		}
 	} else {
-		http.Redirect(w, r, "http://www.lemponparty.org", http.StatusFound)
+		http.Redirect(w, r, "http://www.lemonparty.org", http.StatusFound)
 	}
 }
 
@@ -77,7 +77,7 @@ func sethandler(w http.ResponseWriter, r *http.Request) {
 		p.Send()
 		http.Redirect(w, r, "/", http.StatusFound)
 	} else {
-		http.Redirect(w, r, "http://www.lemponparty.org", http.StatusFound)
+		http.Redirect(w, r, "http://www.lemonparty.org", http.StatusFound)
 	}
 
 }
@@ -92,7 +92,7 @@ func randomhandler(w http.ResponseWriter, r *http.Request) {
 		p.SetRandom()
 		http.Redirect(w, r, "/", http.StatusFound)
 	} else {
-		http.Redirect(w, r, "http://www.lemponparty.org", http.StatusFound)
+		http.Redirect(w, r, "http://www.lemonparty.org", http.StatusFound)
 	}
 }
 
