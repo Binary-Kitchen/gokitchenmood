@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"math"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -20,14 +21,24 @@ import (
 const controlleradress byte = 0x10 //0x10
 const clientadress byte = 0xFE     //0xFE
 const payloadlength byte = 0x1E    //30 da immer 3 byte pro Lampe a 10 Lampen
+const gamma = 2.8
+
 var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 var File bool
 var Port string
 var Limit int
 var HardLimit int
+var correction [256]int
 
 type Lampen struct {
 	Values [10]string
+}
+
+func Setup() {
+	for i := range correction {
+		correction[i] = (int)(math.Pow(float64(i)/float64(255), gamma)*255 + 0.5)
+		//fmt.Println(correction[i])
+	}
 }
 
 func (l *Lampen) Send() {
@@ -37,7 +48,7 @@ func (l *Lampen) Send() {
 		newS := strings.Replace(s, "#", "", -1)
 		for j := 0; j < 6; j += 2 {
 			i, _ := strconv.ParseUint(newS[j:j+2], 16, 8)
-			b := byte(i)
+			b := byte(correction[i])
 			p.Payload[k*3+(j/2)] = b
 		}
 

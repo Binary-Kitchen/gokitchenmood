@@ -179,6 +179,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
 		return
 	}
+	lampen.Setup()
 	lampen.File = false
 	filetowrite = os.Args[1]
 	if len(os.Args) > 2 {
