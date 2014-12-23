@@ -98,12 +98,14 @@ func randomhandler(w http.ResponseWriter, r *http.Request) {
 
 func recieveHandler(w http.ResponseWriter, r *http.Request) {
 	file, header, err := r.FormFile("file") // the FormFile function takes in the POST input id file
-	defer file.Close()
 
 	if err != nil {
-		fmt.Fprintln(w, err)
+		errstring := err.Error()
+		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> " + errstring + "</div>"
+		http.Redirect(w, r, "/upload", http.StatusFound)
 		return
 	}
+	defer file.Close()
 
 	fmt.Println(filepath.Ext(header.Filename))
 
