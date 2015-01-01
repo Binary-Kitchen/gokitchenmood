@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"gokitchenmood/durchreiche"
+	"github.com/binary-kitchen/gokitchenmood/durchreiche"
 
 	"github.com/ant0ine/go-json-rest/rest"
 )

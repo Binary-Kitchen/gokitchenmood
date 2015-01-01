@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"time"
 
-	"gokitchenmood/lampen"
-	"gokitchenmood/script"
+	"github.com/binary-kitchen/gokitchenmood/lampen"
+	"github.com/binary-kitchen/gokitchenmood/script"
 
 	"github.com/ant0ine/go-json-rest/rest"
 	"github.com/fatih/color"
