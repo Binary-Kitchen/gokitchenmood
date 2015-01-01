@@ -10,7 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"time"
 
 	"github.com/binary-kitchen/gokitchenmood/lampen"
 	"github.com/binary-kitchen/gokitchenmood/script"
@@ -39,46 +38,38 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func savehandler(w http.ResponseWriter, r *http.Request) {
-	if lampen.HardLimit != 0 {
-		p := &lampen.Lampen{}
-		var broken bool
-		for i := 0; i < 10; i++ {
-			err := p.Parse(r.FormValue("Lampe"+strconv.Itoa(i)), i)
-			if err != nil {
-				broken = true
-				break
-			}
+	p := &lampen.Lampen{}
+	var broken bool
+	for i := 0; i < 10; i++ {
+		err := p.Parse(r.FormValue("Lampe"+strconv.Itoa(i)), i)
+		if err != nil {
+			broken = true
+			break
 		}
-		if broken {
-			t, _ := template.ParseFiles("templates/error.html")
-			t.Execute(w, p)
-		} else {
-			err := p.WriteLampValues("moodlights")
-			if err != nil {
-				log.Fatal(err)
-			}
-			p.Send()
-			t, _ := template.ParseFiles("templates/success.html")
-			t.Execute(w, p)
-		}
+	}
+	if broken {
+		t, _ := template.ParseFiles("templates/error.html")
+		t.Execute(w, p)
 	} else {
-		http.Redirect(w, r, "http://www.lemonparty.org", http.StatusFound)
+		err := p.WriteLampValues("moodlights")
+		if err != nil {
+			log.Fatal(err)
+		}
+		p.Send()
+		t, _ := template.ParseFiles("templates/success.html")
+		t.Execute(w, p)
 	}
 }
 
 func sethandler(w http.ResponseWriter, r *http.Request) {
-	if lampen.HardLimit != 0 {
-		p := &lampen.Lampen{}
-		color := r.FormValue("color")
-		for i, _ := range p.Values {
-			p.Values[i] = color
-		}
-		p.WriteLampValues("moodlights")
-		p.Send()
-		http.Redirect(w, r, "/", http.StatusFound)
-	} else {
-		http.Redirect(w, r, "http://www.lemonparty.org", http.StatusFound)
+	p := &lampen.Lampen{}
+	color := r.FormValue("color")
+	for i, _ := range p.Values {
+		p.Values[i] = color
 	}
+	p.WriteLampValues("moodlights")
+	p.Send()
+	http.Redirect(w, r, "/", http.StatusFound)
 
 }
 
@@ -87,13 +78,10 @@ func statichandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func randomhandler(w http.ResponseWriter, r *http.Request) {
-	if lampen.HardLimit != 0 {
-		p := &lampen.Lampen{}
-		p.SetRandom()
-		http.Redirect(w, r, "/", http.StatusFound)
-	} else {
-		http.Redirect(w, r, "http://www.lemonparty.org", http.StatusFound)
-	}
+	p := &lampen.Lampen{}
+	p.SetRandom()
+	http.Redirect(w, r, "/", http.StatusFound)
+
 }
 
 func recieveHandler(w http.ResponseWriter, r *http.Request) {
@@ -215,29 +203,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	lampen.Limit = 100
-	lampen.HardLimit = 200
-
-	ticker := time.NewTicker(time.Second * 10)
-	go func() {
-		for _ = range ticker.C {
-			lampen.Limit++
-			if lampen.Limit > 100 {
-				lampen.Limit = 100
-			}
-		}
-	}()
-
-	ticker2 := time.NewTicker(time.Second * 10)
-	go func() {
-		for _ = range ticker2.C {
-			lampen.HardLimit++
-			if lampen.HardLimit > 200 {
-				lampen.HardLimit = 200
-			}
-		}
-	}()
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", savehandler)

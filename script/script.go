@@ -1,6 +1,6 @@
 package script
 
-import "gokitchenmood/lampen"
+import "github.com/binary-kitchen/gokitchenmood/lampen"
 
 var p *lampen.Lampen = &lampen.Lampen{}
 var transfer = make(chan bool, 1)

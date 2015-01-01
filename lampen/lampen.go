@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"math"
 	"math/rand"
 	"net/http"
@@ -26,8 +25,6 @@ const gamma = 2.8
 var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 var File bool
 var Port string
-var Limit int
-var HardLimit int
 var correction [256]int
 
 type Lampen struct {
@@ -61,8 +58,6 @@ func (l *Lampen) Send() {
 	p.Length = payloadlength
 	p.Send(Port, File)
 	//err := errors.New("wa")
-	HardLimit--
-	log.Println("HardLimit: ", HardLimit)
 }
 
 func (l *Lampen) Parse(input string, number int) error {
@@ -127,19 +122,12 @@ func (l *Lampen) GetLamps(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
-	if Limit != 0 {
-		err := r.DecodeJsonPayload(&l)
-		if err != nil {
-			Limit = Limit - 10
-			rest.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		} else {
-			l.Send()
-			Limit--
-		}
+	err := r.DecodeJsonPayload(&l)
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	} else {
-
-		rest.Error(w, "Gehweg", http.StatusTeapot)
+		l.Send()
 	}
 }
 
