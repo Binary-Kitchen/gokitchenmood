@@ -38,7 +38,6 @@ type Packet struct {
 }
 
 func (p *Packet) Send(filename string, file bool) error {
-	var reterr error
 	tosend := []byte{}
 	tosend = append(tosend, preamble)
 	tosend = append(tosend, p.Source)
@@ -56,19 +55,20 @@ func (p *Packet) Send(filename string, file bool) error {
 			panic(err)
 		}
 		fo.Write(tosend[:])
-		reterr = err
+		return nil
 	} else {
 		c := &serial.Config{Name: filename, Baud: 115200}
 		fmt.Println("Serial")
 		s, err := serial.OpenPort(c)
 		if err != nil {
 			log.Fatal(err)
+			return err
 		}
 		_, err = s.Write(tosend)
 		if err != nil {
 			log.Fatal(err)
+			return err
 		}
-		reterr = err
+		return nil
 	}
-	return reterr
 }

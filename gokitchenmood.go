@@ -22,6 +22,7 @@ var uploadalert string
 var filetowrite string
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	log.Println("asdf")
 	title := "moodlights"
 	p := &lampen.Lampen{}
 	err := p.LoadLampValues(title)
@@ -39,26 +40,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func savehandler(w http.ResponseWriter, r *http.Request) {
 	p := &lampen.Lampen{}
-	var broken bool
 	for i := 0; i < 10; i++ {
 		err := p.Parse(r.FormValue("Lampe"+strconv.Itoa(i)), i)
 		if err != nil {
-			broken = true
-			break
+			t, _ := template.ParseFiles("templates/error.html")
+			t.Execute(w, p)
+			return
 		}
 	}
-	if broken {
-		t, _ := template.ParseFiles("templates/error.html")
-		t.Execute(w, p)
-	} else {
-		err := p.WriteLampValues("moodlights")
-		if err != nil {
-			log.Fatal(err)
-		}
-		p.Send()
-		t, _ := template.ParseFiles("templates/success.html")
-		t.Execute(w, p)
+	err := p.WriteLampValues("moodlights")
+	if err != nil {
+		log.Fatal(err)
 	}
+	p.Send()
+	t, _ := template.ParseFiles("templates/success.html")
+	t.Execute(w, p)
 }
 
 func sethandler(w http.ResponseWriter, r *http.Request) {
@@ -215,5 +211,6 @@ func main() {
 	http.HandleFunc("/setscript", setscriptHandler)
 	http.HandleFunc("/templates", statichandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
+
 	http.ListenAndServe(":8080", nil)
 }

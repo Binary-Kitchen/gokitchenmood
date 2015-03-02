@@ -61,18 +61,18 @@ func (l *Lampen) Send() {
 }
 
 func (l *Lampen) Parse(input string, number int) error {
-	if number < 10 {
-		if validColor.MatchString(input) {
-			l.Values[number] = input
-			return nil
-		} else {
-			err := errors.New("String does not match Color Regex")
-			return err
-		}
-	} else {
+	if number > 10 {
 		err := errors.New("ID is not in Range")
 		return err
 	}
+
+	if !validColor.MatchString(input) {
+		err := errors.New("String does not match Color Regex")
+		return err
+	}
+
+	l.Values[number] = input
+	return nil
 
 }
 
@@ -103,22 +103,22 @@ func (l *Lampen) WriteLampValues(filename string) error {
 
 func (l *Lampen) SetLampstosavedValues(filename string) error {
 	err := l.LoadLampValues(filename)
-	if err == nil {
-		l.Send()
-		return nil
-	} else {
+	if err != nil {
 		return err
 	}
+	l.Send()
+	return nil
 }
 
 func (l *Lampen) GetLamps(w rest.ResponseWriter, r *rest.Request) {
 	err := l.LoadLampValues("moodlights")
-	if err == nil {
-		w.WriteJson(&l)
-	} else {
+	if err != nil {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
-
+		return
 	}
+
+	w.WriteJson(&l)
+
 }
 
 func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
@@ -126,9 +126,8 @@ func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	} else {
-		l.Send()
 	}
+	l.Send()
 }
 
 func strtohex(color int64) string {
