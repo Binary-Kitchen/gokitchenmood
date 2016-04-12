@@ -3,7 +3,7 @@
 }
 
 .input-group-addon {
-  width: 150px;
+  min-width: 160px;
 }
 
 .btn {
@@ -22,4 +22,8 @@
 
 .form-control {
   text-align: center;
+}
+
+input[type=color] {
+  padding: 0;
 }
