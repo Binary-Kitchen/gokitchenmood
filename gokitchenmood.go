@@ -3,26 +3,19 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/binary-kitchen/gokitchenmood/lampen"
-	"github.com/binary-kitchen/gokitchenmood/script"
-
 	"github.com/ant0ine/go-json-rest/rest"
-	"github.com/fatih/color"
 )
 
 var uploadalert string
 var filetowrite string
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	log.Println("asdf")
 	title := "moodlights"
 	p := &lampen.Lampen{}
 	err := p.LoadLampValues(title)
@@ -80,86 +73,6 @@ func randomhandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func recieveHandler(w http.ResponseWriter, r *http.Request) {
-	file, header, err := r.FormFile("file") // the FormFile function takes in the POST input id file
-
-	if err != nil {
-		errstring := err.Error()
-		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> " + errstring + "</div>"
-		http.Redirect(w, r, "/upload", http.StatusFound)
-		return
-	}
-	defer file.Close()
-
-	fmt.Println(filepath.Ext(header.Filename))
-
-	if filepath.Ext(header.Filename) != ".lua" {
-		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> File doesn't have .lua extension</div>"
-		http.Redirect(w, r, "/upload", http.StatusFound)
-		return
-	}
-
-	out, err := os.Create("uploaded/" + header.Filename)
-	if err != nil {
-		//fmt.Fprintf(w, "Unable to create file: %s", err.Error())
-
-		errstring := err.Error()
-		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> Unable to create file: " + errstring + "</div>"
-		http.Redirect(w, r, "/upload", http.StatusFound)
-		return
-	}
-
-	defer out.Close()
-
-	// write the content from POST to the file
-	_, err = io.Copy(out, file)
-	if err != nil {
-		//fmt.Fprintln(w, err)
-
-		errstring := err.Error()
-		uploadalert = "<div class=\"alert alert-danger\" role=\"alert\"><b>Oh snap!</b> " + errstring + "</div>"
-		http.Redirect(w, r, "/upload", http.StatusFound)
-		return
-	}
-
-	uploadalert = "<div class=\"alert alert-success\" role=\"alert\"><b>Well done!</b> File uploaded</div>"
-	http.Redirect(w, r, "/upload", http.StatusFound)
-
-	fmt.Println(color.GreenString("Info:"), "File uploaded successfully:", header.Filename)
-
-	//fmt.Fprintf(w, "File uploaded successfully : ")
-	//fmt.Fprintf(w, header.Filename)
-}
-
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("templates/upload.html")
-	err := t.Execute(w, template.HTML(uploadalert))
-	if err != nil {
-		fmt.Println("There was an error:", err)
-	}
-	uploadalert = ""
-}
-
-func scriptHandler(w http.ResponseWriter, r *http.Request) {
-
-	files, _ := ioutil.ReadDir("uploaded/")
-	listing := ""
-	for _, f := range files {
-		if filepath.Ext(f.Name()) == ".lua" {
-			listing = listing + "<option>" + template.HTMLEscapeString(f.Name()) + "</option>"
-		}
-	}
-
-	t, _ := template.ParseFiles("templates/script.html")
-	t.Execute(w, template.HTML(listing))
-
-}
-
-func setscriptHandler(w http.ResponseWriter, r *http.Request) {
-	script.RunScript(r.FormValue("scripts"))
-	http.Redirect(w, r, "/script", http.StatusFound)
-}
-
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
@@ -205,10 +118,6 @@ func main() {
 	http.HandleFunc("/set", sethandler)
 	http.HandleFunc("/random", randomhandler)
 	http.HandleFunc("/static/", statichandler)
-	http.HandleFunc("/receive", recieveHandler)
-	http.HandleFunc("/upload", uploadHandler)
-	http.HandleFunc("/script", scriptHandler)
-	http.HandleFunc("/setscript", setscriptHandler)
 	http.HandleFunc("/templates", statichandler)
 	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
 
