@@ -13,8 +13,6 @@ import (
 	"time"
 
 	"github.com/binary-kitchen/gokitchenmood/durchreiche"
-
-	"github.com/ant0ine/go-json-rest/rest"
 )
 
 const controlleradress byte = 0x10 //0x10
@@ -26,6 +24,8 @@ var validColor = regexp.MustCompile(`^#([A-Fa-f0-9]{6})|([A-Fa-f0-9]{6})$`)
 var File bool
 var Port string
 var correction [256]int
+
+var Lampe Lampen
 
 type Lampen struct {
 	Values [10]string
@@ -110,26 +110,6 @@ func (l *Lampen) SetLampstosavedValues(filename string) error {
 	return nil
 }
 
-func (l *Lampen) GetLamps(w rest.ResponseWriter, r *rest.Request) {
-	err := l.LoadLampValues("moodlights")
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteJson(&l)
-
-}
-
-func (l *Lampen) PostLamps(w rest.ResponseWriter, r *rest.Request) {
-	err := r.DecodeJsonPayload(&l)
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	l.Send()
-}
-
 func strtohex(color int64) string {
 	news := strconv.FormatInt(color, 16)
 	if len(news) < 2 {
@@ -151,4 +131,35 @@ func (l *Lampen) SetRandom() {
 	}
 	l.WriteLampValues("moodlights")
 	l.Send()
+}
+
+func GetLampsHandler(w http.ResponseWriter, r *http.Request) {
+	j, err := json.Marshal(&Lampe)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(j)
+}
+
+func PostLampsHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&Lampe)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = Lampe.WriteLampValues("moodlights")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	Lampe.Send()
+}
+
+func PostLampsRandomHandler(w http.ResponseWriter, r *http.Request) {
+	Lampe.SetRandom()
 }

@@ -1,19 +1,28 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
+	"time"
 
 	"github.com/binary-kitchen/gokitchenmood/lampen"
-	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/carbocation/interpose"
+	"github.com/gorilla/mux"
 )
 
 var uploadalert string
 var filetowrite string
+var limit int
+var mu = &sync.Mutex{}
+var url = "http://127.0.0.1:8080/api/"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	title := "moodlights"
@@ -41,11 +50,30 @@ func savehandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	err := p.WriteLampValues("moodlights")
+
+	b, err := json.Marshal(p)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return
 	}
-	p.Send()
+
+	req, err := http.NewRequest("POST", url+"lampen", bytes.NewBuffer(b))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Status Code not ok")
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println("response Body:", string(body))
+		return
+	}
+
 	t, _ := template.ParseFiles("templates/success.html")
 	t.Execute(w, p)
 }
@@ -56,21 +84,81 @@ func sethandler(w http.ResponseWriter, r *http.Request) {
 	for i, _ := range p.Values {
 		p.Values[i] = color
 	}
-	p.WriteLampValues("moodlights")
-	p.Send()
+	b, err := json.Marshal(p)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	req, err := http.NewRequest("POST", url+"lampen", bytes.NewBuffer(b))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Status Code not ok")
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println("response Body:", string(body))
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusFound)
 
-}
-
-func statichandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, r.URL.Path[1:])
 }
 
 func randomhandler(w http.ResponseWriter, r *http.Request) {
-	p := &lampen.Lampen{}
-	p.SetRandom()
+	req, err := http.NewRequest("POST", url+"lampen/random", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Status Code not ok")
+		body, _ := ioutil.ReadAll(resp.Body)
+		fmt.Println("response Body:", string(body))
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusFound)
 
+}
+
+func isauthorized(header string) bool {
+	switch header {
+	case "xaver":
+		return true
+	default:
+		return false
+	}
+}
+
+func authMiddleware() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			isauth := isauthorized(r.Header.Get("X-BinaryKitchen-Login"))
+			if isauth {
+				next.ServeHTTP(w, r)
+			} else {
+				mu.Lock()
+				if limit > 0 {
+					limit = limit - 1
+					fmt.Println("Limit:", limit)
+					next.ServeHTTP(w, r)
+				} else {
+					http.Error(w, "Rate Limit Reached", http.StatusForbidden)
+				}
+				mu.Unlock()
+			}
+		})
+	}
 }
 
 func main() {
@@ -78,6 +166,17 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage: %s File [-f] \n", os.Args[0])
 		return
 	}
+	limit = 10
+	ticker := time.NewTicker(time.Minute)
+	go func() {
+		for _ = range ticker.C {
+			mu.Lock()
+			if limit < 10 {
+				limit = 10
+			}
+			mu.Unlock()
+		}
+	}()
 	lampen.Setup()
 	lampen.File = false
 	filetowrite = os.Args[1]
@@ -89,37 +188,31 @@ func main() {
 
 	lampen.Port = filetowrite
 
-	lampe := &lampen.Lampen{}
-	lampe.SetLampstosavedValues("moodlights")
+	lampen.Lampe = lampen.Lampen{}
+	lampen.Lampe.SetLampstosavedValues("moodlights")
 
-	rhandler := rest.ResourceHandler{
-		EnableRelaxedContentType: true,
-		EnableStatusService:      true,
-		XPoweredBy:               "phil-api",
-	}
-	err := rhandler.SetRoutes(
-		rest.RouteObjectMethod("GET", "/lamps", lampe, "GetLamps"),
-		rest.RouteObjectMethod("POST", "/lamps", lampe, "PostLamps"),
-		&rest.Route{"GET", "/.status",
-			func(w rest.ResponseWriter, r *rest.Request) {
-				w.WriteJson(rhandler.GetStatus())
-			},
-		},
-		//rest.RouteObjectMethod("GET", "/users/:id", &users, "GetUser"),
-		//rest.RouteObjectMethod("PUT", "/users/:id", &users, "PutUser"),
-		//rest.RouteObjectMethod("DELETE", "/users/:id", &users, "DeleteUser"),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	middle := interpose.New()
 
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/save", savehandler)
-	http.HandleFunc("/set", sethandler)
-	http.HandleFunc("/random", randomhandler)
-	http.HandleFunc("/static/", statichandler)
-	http.HandleFunc("/templates", statichandler)
-	http.Handle("/api/", http.StripPrefix("/api", &rhandler))
+	r := mux.NewRouter()
+	r = r.StrictSlash(true)
+	r.HandleFunc("/", handler)
+	r.HandleFunc("/save", savehandler)
+	r.HandleFunc("/set", sethandler)
+	r.HandleFunc("/random", randomhandler)
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 
-	http.ListenAndServe(":8080", nil)
+	api := mux.NewRouter().PathPrefix("/api").Subrouter()
+	api = api.StrictSlash(true)
+	api.HandleFunc("/lampen", lampen.GetLampsHandler).Methods("GET")
+	api.HandleFunc("/lampen", lampen.PostLampsHandler).Methods("POST")
+	api.HandleFunc("/lampen/random", lampen.PostLampsRandomHandler).Methods("POST")
+
+	middle.Use(authMiddleware())
+	middle.UseHandler(api)
+	r.PathPrefix("/api").Handler(middle)
+
+	go func() {
+		log.Fatal(http.ListenAndServe(":80", r)) // dual stack
+	}()
+	log.Fatal(http.ListenAndServeTLS(":443", "cert.pem", "private.key", r))
 }
