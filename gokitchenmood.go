@@ -22,7 +22,7 @@ var uploadalert string
 var filetowrite string
 var limit int
 var mu = &sync.Mutex{}
-var url = "http://127.0.0.1:8080/api/"
+var url = "http://127.0.0.1/api/"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	title := "moodlights"

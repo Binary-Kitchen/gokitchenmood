@@ -128,6 +128,7 @@ func (l *Lampen) SetRandom() {
 		l.Values[i] = strtohex(colorr)
 		l.Values[i] = l.Values[i] + strtohex(colorg)
 		l.Values[i] = l.Values[i] + strtohex(colorb)
+		l.Values[i] = "#" + l.Values[i]
 	}
 	l.WriteLampValues("moodlights")
 	l.Send()
