@@ -24,6 +24,20 @@ var limit int
 var mu = &sync.Mutex{}
 var url = "http://127.0.0.1/api/"
 
+func loadList() ([]string, error) {
+	var li []string
+	filename := "auth.json"
+	body, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return li, err
+	}
+	err = json.Unmarshal(body, &li)
+	if err != nil {
+		return li, err
+	}
+	return li, nil
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	title := "moodlights"
 	p := &lampen.Lampen{}
@@ -132,12 +146,17 @@ func randomhandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func isauthorized(header string) bool {
-	switch header {
-	case "xaver":
-		return true
-	default:
+	li, err := loadList()
+	if err != nil {
+		fmt.Println(err)
 		return false
 	}
+	for _, a := range li {
+		if a == header {
+			return true
+		}
+	}
+	return false
 }
 
 func authMiddleware() func(http.Handler) http.Handler {
