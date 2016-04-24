@@ -6,26 +6,22 @@ body {
   user-select: none;
 }
 
-.row {
-  margin: 7px 0 0 0;
+.input-group {
+  margin-bottom: 5px;
 }
 
 .input-group-addon {
   min-width: 160px;
 }
 
-.btn {
-  width: 150px;
-  margin: 5px 0 0 0;
+.logo {
+  max-width: 75px;
+  float: left;
+  margin: 10px 10px 10px 0;
 }
 
-.logo {
-  width: 75px;
-  height: 75px;
-  float: left;
-  position: relative;
-  top: -20px;
-  margin: 0 10px 0 0;
+h1 {
+  margin-top: .67em;
 }
 
 .form-control {
@@ -34,4 +30,26 @@ body {
 
 input[type=color] {
   padding: 0;
+  min-height: 38px;
+  -webkit-appearance:none;
+}
+
+input[type=color]::after {
+  content: attr(value);
+  color: darkgrey;
+  font-size: 16px;
+  position: relative;
+  top: -26px;
+}
+
+input[type=color]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type=color]::-webkit-color-swatch {
+  border: none;
+}
+
+input[type=color]::-moz-color-swatch {
+  border: none;
 }

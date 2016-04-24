@@ -3,86 +3,81 @@
 <head>
   <title>Moodlights Setting</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <link rel="stylesheet" type="text/css" href="static/bootstrap-3.2.0-dist/css/bootstrap.min.css"/>
-  <link rel="stylesheet" type="text/css" href="static/bootstrap-3.2.0-dist/css/bootstrap-theme.min.css"/>
+  <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css"/>
   <link rel="stylesheet" type="text/css" href="static/custom.css"/>
 </head>
 <body>
 <div class="container-fluid">
-  <div class="page-header">
-    <img src="static/logo.svg" class="logo img-rounded"><h1>Moodlights</h1>
-  </div>
-  <div class="row">
-  <div class="col-md-6 col-lg-4">
-  <form action="/save" method="POST" class="form-horizontal">
-      <div class="input-group">
-        <div class="input-group-addon">Treppenhaus:</div>
-        <input list="colors" type="color" list="colors" class="form-control" name="Lampe0" value={{index .Values 0}}>
-          <datalist id="colors">
-              <option value="#FF0000">Rot</option>
-              <option value="#00FF00">Grün</option>
-              <option value="#0000FF">Blau</option>
-              <option value="#FFFF00">Gelb</option>
-              <option value="#FF00FF">Lila</option>
-              <option value="#FFFFFF">Weiß</option>
-              <option value="#000000">Aus</option>
-          </datalist>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Telefon:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe1" value={{index .Values 1}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Rotes Sofa:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe2" value={{index .Values 2}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Regal:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe3" value={{index .Values 3}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Matrix:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe4" value={{index .Values 4}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Küche:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe5" value={{index .Values 5}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Getränkeautomat:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe6" value={{index .Values 6}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Server:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe7" value={{index .Values 7}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Linkes Fenster:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe8" value={{index .Values 8}}>
-      </div>
-      <div class="input-group">
-        <div class="input-group-addon">Rechts Fenster:</div>
-        <input type="color" list="colors" class="form-control" name="Lampe9" value={{index .Values 9}}>
-      </div>
-    <div class="radio">
-      <input class="btn btn-success" type="submit" value="Save">
+    <div class="row">
+        <div class="col-xs-12">
+            <img src="static/logo.svg" class="logo img-rounded img-fluid" />
+            <h1>Moodlights</h1>
+        </div>
     </div>
-  </form>
-  </div>
-  <div class="col-md-6 col-lg-4">
-      <form action="/set" class="form">
-          <div class="input-group">
-              <div class="input-group-addon"><strong>Alle</strong></div>
-              <input type="color" list="colors" onchange="this.form.submit()" name="color" class="form-control">
-          </div>
-      </form>
-      <form action="/random" method="POST" class="form-horizontal">
-          <div class="radio">
-              <input class="btn btn-primary btn-block" type="submit" value="Random">
-          </div>
-      </form>
-  </div>
-  </div>
+    <div class="row">
+        <div class="col-md-6 col-lg-4">
+            <form action="/save" method="POST" class="form-horizontal">
+                <div class="input-group">
+                    <div class="input-group-addon">Treppenhaus:</div>
+                    <input onchange="this.form.submit()" type="color" list="colors" pattern="#[a-f0-9]{6}" class="form-control" name="Lampe0" value={{index .Values 0}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Telefon:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe1" value={{index .Values 1}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Rotes Sofa:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe2" value={{index .Values 2}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Regal:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe3" value={{index .Values 3}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Matrix:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe4" value={{index .Values 4}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Küche:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe5" value={{index .Values 5}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Getränkeautomat:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe6" value={{index .Values 6}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Server:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe7" value={{index .Values 7}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Linkes Fenster:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe8" value={{index .Values 8}} />
+                </div>
+                <div class="input-group">
+                    <div class="input-group-addon">Rechts Fenster:</div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="Lampe9" value={{index .Values 9}} />
+                </div>
+            </form>
+            <form action="/set" class="form">
+                <div class="input-group">
+                    <div class="input-group-addon"><strong>Alle</strong></div>
+                    <input type="color" list="colors" pattern="#[a-f0-9]{6}" onchange="this.form.submit()" class="form-control" name="color" value="#FFFF00"  />
+                </div>
+            </form>
+            <form action="/random" method="POST" class="form-horizontal">
+                <button class="btn btn-outline-primary btn-block" type="button">Random</button>
+            </form>
+        </div>
+    </div>
 </div>
+<datalist id="colors">
+    <option value="#FF0000">Rot</option>
+    <option value="#00FF00">Grün</option>
+    <option value="#0000FF">Blau</option>
+    <option value="#FFFF00">Gelb</option>
+    <option value="#FF00FF">Lila</option>
+    <option value="#FFFFFF">Weiß</option>
+    <option value="#000000">Aus</option>
+</datalist>
 </body>
 </html>
